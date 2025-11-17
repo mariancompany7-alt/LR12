@@ -19,9 +19,12 @@ void MainWindow::on_pbExit_clicked()
     QApplication::exit();
 }
 
-void MainWindow::on_pbShow_clicked()
-{
-    ptr = new Firm(ui->le_1->text(), ui->le_2->text().toInt());
+void MainWindow::on_pbShow_clicked() {
+
+    QString type = ui->le_1->text();
+    int size = ui->le_2->text().toInt();
+
+    ptr = new Firm(type, size);
     ui->label->setText(ptr->toString());
 }
 

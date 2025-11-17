@@ -1,14 +1,15 @@
 #ifndef DATABASEMANAGER_H
 #define DATABASEMANAGER_H
 #include <QSqlDatabase>
-#include <qQebug>
+#include <QSqlQuery>
+#include <QDebug>
 
 class DatabaseManager {
 
 public:
-    static DatabaseManager* getInstance() {
+    static DatabaseManager* getInstance(const QString &type, int size) {
         if(instance == nullptr) {
-            instance = new DatabaseManager;
+            instance = new DatabaseManager(type, size);
         }
         return instance;
     }
@@ -19,17 +20,23 @@ private:
     QSqlDatabase db;
     static DatabaseManager* instance;
 
-    DatabaseManager::DatabaseManager() {
+    DatabaseManager(const QString &type, int size) {
 
         db = QSqlDatabase::addDatabase("QSQLITE");
-        db.setDatabaseName("firms.db");
+        db.setDatabaseName("./LR12.db");
 
         if (!db.open()) {
-            qDebug() << "Помилка відкриття БД:";
+            qDebug() << "Помилка відкриття БД";
         } else {
             qDebug() << "БД відкрита успішно!";
         }
 
+        QSqlQuery query(db);
+        query.exec("CREATE TABLE IF NOT EXISTS firms (type TEXT, size INT)");
+
+        query.prepare("INSERT INTO firms (type, size) VALUES (:type, :size)");
+        query.bindValue(":type", type);
+        query.bindValue(":size", size);
     }
 };
 
